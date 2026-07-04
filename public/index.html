@@ -1,0 +1,140 @@
+<!-- public/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Restaurant Chatbot</title>
+    <style>
+        
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #f7f9fb;
+            margin: 0; 
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        
+        .chat-container {
+            background-color: #ffffff;
+            width: 100%;
+            max-width: 500px;
+            height: 600px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid #eaeaea;
+        }
+
+        /* हेडर स्टाइलिंग */
+        .chat-header {
+            background-color: #ffffff;
+            padding: 1.2rem;
+            text-align: center;
+            border-bottom: 1px solid #f0f0f0;
+            margin: 0;
+        }
+        
+        .chat-header h2 {
+            margin: 0;
+            font-size: 1.3rem;
+            color: #222222;
+            font-weight: 600;
+        }
+
+        /* चैट मैसेजेस का एरिया */
+        #chat { 
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            background-color: #fafbfc;
+            white-space: pre-line; /* लाइन ब्रेक्स को ठीक रखने के लिए */
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #333333;
+        }
+
+        /* इनपुट बॉक्स और बटन का नीचे वाला एरिया */
+        .input-container {
+            display: flex;
+            padding: 1rem;
+            background-color: #ffffff;
+            border-top: 1px solid #f0f0f0;
+            gap: 8px;
+        }
+
+        /* सर्च बार/इनपुट फ़ील्ड */
+        input[type="text"] { 
+            flex: 1;
+            padding: 0.8rem 1rem; 
+            border: 1px solid #e0e0e0; 
+            border-radius: 12px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        input[type="text"]:focus {
+            border-color: #007aff; /* फोकस होने पर ब्लू बॉर्डर */
+        }
+
+        /* सेंड बटन */
+        button { 
+            padding: 0.8rem 1.2rem; 
+            background-color: #007aff; 
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #0063cc; /* होवर करने पर डार्क ब्लू */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2>🍽️ Restaurant AI Assistant 🍽️</h2>
+        </div>
+        
+        <div id="chat"></div>
+        
+        <div class="input-container">
+            <input type="text" id="userInput" placeholder="Ask me: What's on the menu?" />
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            const input = document.getElementById("userInput").value;
+            if (!input.trim()) return; // खाली मैसेज सेंड न हो
+
+            const res = await fetch("/api/chat",{
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ input })
+            });
+            const data = await res.json();
+            const chatDiv = document.getElementById("chat");
+            
+            chatDiv.innerText += `😊 You: ${input}\n🤖 Bot: ${data.output}\n\n`;
+            document.getElementById("userInput").value=""; 
+            
+            // ऑटोमैटिक स्क्रॉल डाउन ताकि नए मैसेज तुरंत दिखें
+            chatDiv.scrollTop = chatDiv.scrollHeight;
+        }
+    </script>
+</body>  
+</html>
